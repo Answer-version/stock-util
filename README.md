@@ -59,6 +59,18 @@ python desktop_app.py
 - 打开内嵌窗口
 - 使用本机目录保存缓存和本地配置
 
+### 2.4 直接下载已打包桌面版
+
+如果你不想自己安装 Python 环境，也可以直接下载已经构建好的桌面应用：
+
+- 正式版本下载页：[Releases](https://github.com/Answer-version/stock-util/releases)
+- 当前首个正式版本：[v0.1.0](https://github.com/Answer-version/stock-util/releases/tag/v0.1.0)
+
+适合的使用方式：
+
+- 想自己开发、改代码：用 `2.1 + 2.2` 或 `2.3`
+- 想直接打开就用：去 `Releases` 下载桌面版
+
 ## 3. 首次使用建议
 
 首次建议直接用默认参数，先把完整流程跑通：
@@ -542,6 +554,12 @@ BTC/USDT, ETH/USDT, SOL/USDT
 - `PNG`：适合截图汇报、发群或留档
 - `HTML`：适合完整保存本次研究结果
 
+导出内容大致包括：
+
+- `CSV`：净值、回撤、换手、持仓和得分等时序结果
+- `PNG`：当前净值曲线截图
+- `HTML`：核心指标表、持仓表、最近价格和得分明细
+
 ## 9. 当前策略规则说明
 
 请务必理解当前系统不是“预测器”，而是一个规则化研究工具。
@@ -562,7 +580,7 @@ BTC/USDT, ETH/USDT, SOL/USDT
 
 ## 10. 常见问题
 
-### 9.1 点击运行后提示行情源不可用
+### 10.1 点击运行后提示行情源不可用
 
 可以按下面顺序处理：
 
@@ -578,7 +596,12 @@ BTC/USDT, ETH/USDT
 
 开始。
 
-### 9.2 为什么“当前该买谁”不是看总收益最高的币
+补充说明：
+
+- 本系统默认直接使用真实行情，不会自动回退到演示数据
+- 如果网络受限、交易所限流或区间过长，就可能出现请求失败或等待较久
+
+### 10.2 为什么“当前该买谁”不是看总收益最高的币
 
 因为系统不是比较“谁涨得最多”，而是在每个时点比较“谁当前综合得分更高”。
 
@@ -588,7 +611,7 @@ BTC/USDT, ETH/USDT
 - `Top N` 规则
 - `最新持仓` 表
 
-### 9.3 为什么最新持仓会变
+### 10.3 为什么最新持仓会变
 
 因为因子分数每天都会随着行情变化而变化。
 
@@ -666,6 +689,7 @@ python scripts/build_desktop.py --clean
 仓库已经带了 GitHub Actions 工作流：
 
 - 推送到 `main` 时会自动构建
+- 推送 `v*` 标签时会自动创建 Release
 - 也可以手动触发 `Build Desktop Apps`
 
 它会分别在：
@@ -678,7 +702,66 @@ python scripts/build_desktop.py --clean
 - `QuantVibe-macOS`
 - `QuantVibe-Windows`
 
-### 14.3 打包注意事项
+### 14.3 从哪里下载正式应用
+
+如果你只是想下载可以直接运行的桌面版，优先去仓库的 Releases 页面：
+
+- [Releases](https://github.com/Answer-version/stock-util/releases)
+
+当前首个正式版本为：
+
+- [v0.1.0](https://github.com/Answer-version/stock-util/releases/tag/v0.1.0)
+
+当前可下载文件：
+
+- [QuantVibe-macOS.dmg](https://github.com/Answer-version/stock-util/releases/download/v0.1.0/QuantVibe-macOS.dmg)
+- [QuantVibe-Windows.zip](https://github.com/Answer-version/stock-util/releases/download/v0.1.0/QuantVibe-Windows.zip)
+
+简单理解：
+
+- `Releases`：正式版本下载入口，适合给用户分发
+- `Actions Artifacts`：CI 临时构建产物，默认会过期，更适合测试和验证
+
+下载后可直接这样使用：
+
+- macOS：下载 `QuantVibe-macOS.dmg`，打开后把 `QuantVibe.app` 拖到 `Applications`
+- Windows：下载 `QuantVibe-Windows.zip`，解压后双击目录中的 `QuantVibe.exe`
+
+首次打开如果系统提示安全校验：
+
+- macOS：右键应用，选择“打开”，再确认一次
+- Windows：如果 SmartScreen 弹窗，先确认来源是本仓库版本，再选择继续运行
+
+### 14.4 如何发布新版本
+
+推荐发布方式：
+
+1. 确认代码已合并到 `main`
+2. 创建版本标签，例如 `v0.1.1`
+3. 推送标签到 GitHub
+4. 等待 `Build Desktop Apps` 工作流完成
+5. 在 `Releases` 页面查看自动生成的版本与安装包
+
+示例命令：
+
+```bash
+git tag v0.1.1
+git push origin v0.1.1
+```
+
+如果你不想本地打标签，也可以去 GitHub 的 `Actions -> Build Desktop Apps -> Run workflow`，手动填写：
+
+- `release_tag`：例如 `v0.1.1`
+- `release_name`：例如 `v0.1.1` 或 `QuantVibe v0.1.1`
+
+工作流会自动：
+
+- 构建 macOS 包
+- 构建 Windows 包
+- 创建或更新对应版本的 GitHub Release
+- 上传两个安装包到 Release Assets
+
+### 14.5 打包注意事项
 
 - Windows 版必须在 Windows 环境构建
 - macOS 版必须在 macOS 环境构建
