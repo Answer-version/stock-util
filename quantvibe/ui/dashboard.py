@@ -25,9 +25,10 @@ from quantvibe.pipelines.research import ResearchPipeline, ResearchRun
 from quantvibe.ui.theme import APP_CSS
 
 
-DEFAULT_SYMBOLS = ["BTC/USDT", "ETH/USDT"]
-DEFAULT_START_DATE = date(2025, 1, 1)
-DEFAULT_END_DATE = date(2025, 6, 30)
+TODAY = date.today()
+DEFAULT_SYMBOLS = ["BTC/USDT", "ETH/USDT", "SOL/USDT", "BNB/USDT"]
+DEFAULT_START_DATE = date(TODAY.year, 1, 1)
+DEFAULT_END_DATE = TODAY
 DEFAULT_TOP_N = 1
 FACTOR_PACK = [
     MomentumFactor(),
@@ -116,7 +117,7 @@ def _sidebar_controls(st: Any) -> dict[str, Any]:
         symbol_text = st.text_area(
             "标的池",
             value=", ".join(DEFAULT_SYMBOLS),
-            help="用英文逗号分隔，例如 BTC/USDT, ETH/USDT, SOL/USDT",
+            help="用英文逗号分隔，例如 BTC/USDT, ETH/USDT, SOL/USDT, BNB/USDT",
         )
         start_date = st.date_input("开始日期", value=DEFAULT_START_DATE)
         end_date = st.date_input("结束日期", value=DEFAULT_END_DATE)
