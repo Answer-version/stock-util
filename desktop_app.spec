@@ -2,7 +2,14 @@
 
 import sys
 
-from PyInstaller.utils.hooks import collect_all, copy_metadata
+from PyInstaller.utils.hooks import (
+    collect_all,
+    collect_data_files,
+    collect_dynamic_libs,
+    collect_submodules,
+    copy_metadata,
+    is_module_or_submodule,
+)
 
 
 datas = [
@@ -16,7 +23,6 @@ hiddenimports = []
 for import_name, metadata_name in (
     ("streamlit", "streamlit"),
     ("plotly", "plotly"),
-    ("kaleido", "kaleido"),
     ("pyarrow", "pyarrow"),
     ("ccxt", "ccxt"),
     ("webview", "pywebview"),
@@ -26,6 +32,15 @@ for import_name, metadata_name in (
     binaries += package_binaries
     hiddenimports += package_hiddenimports
     datas += copy_metadata(metadata_name)
+
+datas += collect_data_files("kaleido")
+binaries += collect_dynamic_libs("kaleido")
+hiddenimports += collect_submodules(
+    "kaleido",
+    filter=lambda name: not is_module_or_submodule(name, "kaleido.mocker"),
+    on_error="ignore",
+)
+datas += copy_metadata("kaleido")
 
 
 a = Analysis(
