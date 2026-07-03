@@ -1,0 +1,6 @@
+-r requirements.txt
+pyinstaller==6.16.0
+pyinstaller-hooks-contrib==2025.8
+pyobjc-core==12.2.1; sys_platform == "darwin"
+pyobjc-framework-Cocoa==12.2.1; sys_platform == "darwin"
+pywebview==6.2.1

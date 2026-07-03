@@ -44,6 +44,21 @@ streamlit run streamlit_app.py --server.address 127.0.0.1 --server.port 8501
 http://127.0.0.1:8501/
 ```
 
+### 2.3 启动桌面版开发入口
+
+如果你想直接以桌面 App 方式运行，而不是自己打开浏览器，可以使用：
+
+```bash
+pip install -r requirements-desktop.txt
+python desktop_app.py
+```
+
+桌面版入口会自动：
+
+- 启动本地 Streamlit 服务
+- 打开内嵌窗口
+- 使用本机目录保存缓存和本地配置
+
 ## 3. 首次使用建议
 
 首次建议直接用默认参数，先把完整流程跑通：
@@ -616,3 +631,54 @@ BTC/USDT, ETH/USDT
 ## 13. 风险提示
 
 本项目仅用于量化研究、策略验证和界面演示，不构成任何投资建议。历史回测结果不代表未来表现，实盘前请自行完成更严格的风险评估与验证。
+
+## 14. 打包成 Windows / macOS App
+
+当前仓库已经内置桌面打包链路，核心文件包括：
+
+- [desktop_app.py](/Users/answer/Documents/stock-util/desktop_app.py)
+- [desktop_app.spec](/Users/answer/Documents/stock-util/desktop_app.spec)
+- [requirements-desktop.txt](/Users/answer/Documents/stock-util/requirements-desktop.txt)
+- [scripts/build_desktop.py](/Users/answer/Documents/stock-util/scripts/build_desktop.py)
+- [.github/workflows/build-desktop.yml](/Users/answer/Documents/stock-util/.github/workflows/build-desktop.yml)
+
+### 14.1 本地构建
+
+先安装桌面打包依赖：
+
+```bash
+pip install -r requirements-desktop.txt
+```
+
+然后执行：
+
+```bash
+python scripts/build_desktop.py --clean
+```
+
+构建产物默认在：
+
+- `dist/QuantVibe.app` 或 `dist/artifacts/QuantVibe-macOS.dmg`
+- `dist/QuantVibe/` 或 `dist/artifacts/QuantVibe-windows.zip`
+
+### 14.2 GitHub 自动构建
+
+仓库已经带了 GitHub Actions 工作流：
+
+- 推送到 `main` 时会自动构建
+- 也可以手动触发 `Build Desktop Apps`
+
+它会分别在：
+
+- `macos-latest`
+- `windows-latest`
+
+上产出桌面包，并把结果上传为 Actions Artifacts。
+
+### 14.3 打包注意事项
+
+- Windows 版必须在 Windows 环境构建
+- macOS 版必须在 macOS 环境构建
+- 当前方案是“桌面壳 + 本地 Web 服务”，不是纯原生 UI
+- 真实行情依赖网络连接，离线时无法正常拉取数据
+- 如果要给外部用户分发，后续最好补 mac 签名公证和 Windows 签名
