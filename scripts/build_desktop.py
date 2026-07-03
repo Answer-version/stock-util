@@ -56,7 +56,7 @@ def _package_artifacts() -> None:
     else:
         bundle_dir = DIST_DIR / "QuantVibe"
         if bundle_dir.exists():
-            archive_base = artifact_dir / "QuantVibe-windows"
+            archive_base = artifact_dir / "QuantVibe-Windows"
             shutil.make_archive(str(archive_base), "zip", root_dir=DIST_DIR, base_dir="QuantVibe")
 
 
