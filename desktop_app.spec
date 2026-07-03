@@ -58,13 +58,15 @@ a = Analysis(
 )
 pyz = PYZ(a.pure)
 
+exe_name = "QuantVibe-bin" if sys.platform == "darwin" else "QuantVibe"
+
 exe = EXE(
     pyz,
     a.scripts,
     a.binaries,
     a.datas,
     [],
-    name="QuantVibe",
+    name=exe_name,
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
