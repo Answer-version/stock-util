@@ -1,0 +1,18 @@
+data:
+  cache_dir: ./cache
+  schema_version: v1
+
+providers:
+  crypto:
+    default: crypto_ccxt
+    exchange_id: binance
+    cache_ttl_seconds: 86400
+
+execution:
+  default_execution_price: next_open
+  rebalance_freq: 1D
+
+backtest:
+  top_n: 2
+  commission_bps: 10
+  slippage_bps: 5
