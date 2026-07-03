@@ -659,7 +659,7 @@ python scripts/build_desktop.py --clean
 构建产物默认在：
 
 - `dist/QuantVibe.app` 或 `dist/artifacts/QuantVibe-macOS.dmg`
-- `dist/QuantVibe/` 或 `dist/artifacts/QuantVibe-windows.zip`
+- `dist/QuantVibe/` 或 `dist/artifacts/QuantVibe-Windows.zip`
 
 ### 14.2 GitHub 自动构建
 
@@ -673,7 +673,10 @@ python scripts/build_desktop.py --clean
 - `macos-latest`
 - `windows-latest`
 
-上产出桌面包，并把结果上传为 Actions Artifacts。
+上产出桌面包，并把结果上传为 Actions Artifacts：
+
+- `QuantVibe-macOS`
+- `QuantVibe-Windows`
 
 ### 14.3 打包注意事项
 
