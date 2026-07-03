@@ -2,9 +2,23 @@ name: Build Desktop Apps
 
 on:
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Release tag, e.g. v0.1.0
+        required: false
+        type: string
+      release_name:
+        description: Release title, defaults to release tag
+        required: false
+        type: string
   push:
     branches:
       - main
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -47,3 +61,59 @@ jobs:
           name: ${{ matrix.artifact_name }}
           path: ${{ matrix.artifact_path }}
           if-no-files-found: error
+
+  release:
+    name: Publish Release
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v') || inputs.release_tag != ''
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download macOS artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: QuantVibe-macOS
+          path: dist/release/QuantVibe-macOS
+
+      - name: Download Windows artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: QuantVibe-Windows
+          path: dist/release/QuantVibe-Windows
+
+      - name: Resolve release metadata
+        shell: bash
+        run: |
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            RELEASE_TAG="${GITHUB_REF_NAME}"
+          else
+            RELEASE_TAG="${{ inputs.release_tag }}"
+          fi
+          RELEASE_NAME="${{ inputs.release_name }}"
+          if [[ -z "${RELEASE_NAME}" ]]; then
+            RELEASE_NAME="${RELEASE_TAG}"
+          fi
+          echo "RELEASE_TAG=${RELEASE_TAG}" >> "$GITHUB_ENV"
+          echo "RELEASE_NAME=${RELEASE_NAME}" >> "$GITHUB_ENV"
+
+      - name: Create or update release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          MAC_FILE="dist/release/QuantVibe-macOS/QuantVibe-macOS.dmg"
+          WIN_FILE="dist/release/QuantVibe-Windows/QuantVibe-Windows.zip"
+
+          if gh release view "${RELEASE_TAG}" >/dev/null 2>&1; then
+            gh release upload "${RELEASE_TAG}" "${MAC_FILE}" "${WIN_FILE}" --clobber
+            gh release edit "${RELEASE_TAG}" --title "${RELEASE_NAME}" --latest
+          else
+            gh release create "${RELEASE_TAG}" "${MAC_FILE}" "${WIN_FILE}" \
+              --target "${GITHUB_SHA}" \
+              --title "${RELEASE_NAME}" \
+              --generate-notes \
+              --latest
+          fi
